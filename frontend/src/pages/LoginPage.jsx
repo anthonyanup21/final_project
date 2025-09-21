@@ -60,18 +60,14 @@ const LoginPage = () => {
             </div>
 
             <div
-              className="absolute right-114 top-79 cursor-pointer  text-white z-10  hover:text-gray-300"
+              className="absolute right-131 top-86 cursor-pointer  text-white z-10  hover:text-gray-300"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEye /> : <FaEyeSlash />}
             </div>
           </div>
 
-          <div className="text-right mt-2">
-            <a href="/forgot-password" className="link link-primary text-sm">
-              Forgot password?
-            </a>
-          </div>
+       
 
           <button
             type="submit"

@@ -36,9 +36,9 @@ const Messagecontainer = () => {
     );
 
   return (
-    <div className="p-2 space-y-3" >
+    <div className="p-2 space-y-3 overflow-y-auto" >
       {messages.map((message) => (
-        <MessageBubble message={message} user={user} />
+        <MessageBubble key={message._id} message={message} user={user} />
       ))}
       <div ref={autoScroll}></div>
     </div>

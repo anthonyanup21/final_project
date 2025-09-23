@@ -41,9 +41,10 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
 
     try {
+        console.log("hello")
         const senderId = req.userId
         const { id: reciverId } = req.params
-        const { text, image } = req.body
+        const { text, image,tempId} = req.body
         let imageUrl
         if (image) {
             const uploadResponse = await cloudinary.uploader.upload(image)
@@ -57,6 +58,7 @@ export const sendMessage = async (req, res) => {
             image: imageUrl
         })
         await newMessage.save()
+        console.log(newMessage)
 
         //implement socket.io here
         const reciverSocketId=getReciverSocketId(reciverId)
@@ -64,8 +66,9 @@ export const sendMessage = async (req, res) => {
             io.to(reciverSocketId).emit("newMessage",newMessage)//if there is no to() this message would go to everybody
         }
 
+
         
-        res.status(200).json({ success: true, newMessage })
+        res.status(200).json({ success: true, newMessage,tempId })
 
 
     } catch (error) {

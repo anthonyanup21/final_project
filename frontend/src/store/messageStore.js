@@ -1,14 +1,16 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
-import {io} from "socket.io-client"
+import { io } from "socket.io-client"
 import useAuthStore from "./authStore";
+import { use } from "react";
 
 const useMessageStore = create((set, get) => ({
     isUserLoading: false,
     isGettingMessages: false,
     allUsers: [],
     messages: [],
+    messagesQueue: [],
     selectedUser: null,
     isSendingMessage: false,
     setSelectedUser: (user) => {
@@ -42,11 +44,25 @@ const useMessageStore = create((set, get) => ({
 
     },
     sendMessage: async (messageData) => {
-        const { selectedUser, messages } = get()
-        set({ isSendingMessage: true })
+        const {  messages, messagesQueue } = get()
+
+        // set({ isSendingMessage: true })
+        const tempId = "tempid" + Date.now()
+        const { text, image } = messageData
+        const tempMessage = {
+            tempId,
+            senderId: useAuthStore.getState().user._id,
+            text,
+            image
+
+        }
+        //optiemistic rendering
+        set({ messages: [...messages, tempMessage], messagesQueue: [...messagesQueue, tempMessage] })
+
+
         try {
-            const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, messageData)
-            set({ messages: [...messages, res.data.newMessage], isSendingMessage: false })
+            get().processMessageQueue()
+
 
         } catch (error) {
             set({ isSendingMessage: false })
@@ -57,8 +73,29 @@ const useMessageStore = create((set, get) => ({
         }
 
     },
+
+    processMessageQueue: async () => {
+
+        const messageData = get().messagesQueue[0]
+        const res = await axiosInstance.post(`/message/send/${get().selectedUser._id}`, { ...messageData, tempId:messageData.tempId })
+        const { newMessage, tempId:returnedTempId } = res.data
+  
+
+        set((state) => ({
+            messages: state.messages.map((message) => (message.tempId == returnedTempId ? newMessage : message)),
+            messagesQueue: state.messagesQueue.filter((msg) => msg.tempId != returnedTempId)
+        }))
+
+
+        if (get().messagesQueue.length > 0) {
+            get().processMessageQueue();
+        }
+
+
+
+    },
     removeSelectedUser: () => {
-        set({ selectedUser: null, message: [], isGettingMessages: false })
+        set({ selectedUser: null, messages: [], isGettingMessages: false })
     },
     reset: () => {
         set({
@@ -71,20 +108,20 @@ const useMessageStore = create((set, get) => ({
         })
     },
     //socket.io
-    subscribeNewMessage:()=>{
-        const {selectedUser}=get()
+    subscribeNewMessage: () => {
+        const { selectedUser } = get()
         if (!selectedUser) return
-        const {socket}=useAuthStore.getState()
-        socket.on("newMessage",(newMessage)=>{
-            if (newMessage.senderId!=selectedUser._id) return //update message only if the message is sent from selected user
-            set({messages:[...get().messages,newMessage]})
+        const { socket } = useAuthStore.getState()
+        socket.on("newMessage", (newMessage) => {
+            if (newMessage.senderId != selectedUser._id) return //update message only if the message is sent from selected user
+            set({ messages: [...get().messages, newMessage] })
         })
 
 
     },
-    unSubscribeNewMessage:()=>{
-                const {socket}=useAuthStore.getState()
-                socket.off("newMessage")
+    unSubscribeNewMessage: () => {
+        const { socket } = useAuthStore.getState()
+        socket.off("newMessage")
 
 
     }

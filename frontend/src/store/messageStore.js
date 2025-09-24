@@ -44,7 +44,7 @@ const useMessageStore = create((set, get) => ({
 
     },
     sendMessage: async (messageData) => {
-        const {  messages, messagesQueue } = get()
+        const { messages, messagesQueue } = get()
 
         // set({ isSendingMessage: true })
         const tempId = "tempid" + Date.now()
@@ -61,7 +61,11 @@ const useMessageStore = create((set, get) => ({
 
 
         try {
-            get().processMessageQueue()
+            if (get().messagesQueue.length == 1) {
+                get().processMessageQueue()
+
+
+            }
 
 
         } catch (error) {
@@ -77,9 +81,9 @@ const useMessageStore = create((set, get) => ({
     processMessageQueue: async () => {
 
         const messageData = get().messagesQueue[0]
-        const res = await axiosInstance.post(`/message/send/${get().selectedUser._id}`, { ...messageData, tempId:messageData.tempId })
-        const { newMessage, tempId:returnedTempId } = res.data
-  
+        const res = await axiosInstance.post(`/message/send/${get().selectedUser._id}`, { ...messageData, tempId: messageData.tempId })
+        const { newMessage, tempId: returnedTempId } = res.data
+
 
         set((state) => ({
             messages: state.messages.map((message) => (message.tempId == returnedTempId ? newMessage : message)),

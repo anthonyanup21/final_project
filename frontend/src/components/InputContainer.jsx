@@ -29,9 +29,12 @@ const InputContainer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim().length && !preview) return;
-    await sendMessage({text:text.trim(),image:preview});
-    settext("")
+    if (preview){
+      console.log("message contains image")
+    }
+    sendMessage({text:text.trim(),image:preview});
     setpreview(null)
+    settext("")
   };
   return (
     <form onSubmit={handleSubmit}>

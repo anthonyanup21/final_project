@@ -128,6 +128,17 @@ const useMessageStore = create((set, get) => ({
         socket.off("newMessage")
 
 
+    },
+    downloadImage: async (url) => {
+
+        const forcedUrl = url.replace("/upload/", "/upload/fl_attachment:quickChat_image/");
+        const link = document.createElement("a");
+        link.href = forcedUrl;
+        link.click();
+        document.body.removeChild(link); // remove after click
+
+   
+
     }
 
 }))

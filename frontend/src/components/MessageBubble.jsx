@@ -1,6 +1,9 @@
 import React from "react";
+import { IoMdDownload } from "react-icons/io";
+import useMessageStore from "../store/messageStore";
 
 const MessageBubble = ({ message, user }) => {
+  const {downloadImage}=useMessageStore()
   return (
     <>
       {message.image && (
@@ -14,6 +17,7 @@ const MessageBubble = ({ message, user }) => {
               src={message.image}
               alt="attachment"
               className="rounded-2xl w-auto h-auto  max-w-[350px] max-h-[350px]"
+              down
             />
 
             <span className="absolute top-1/2 left-1/2 z-10">
@@ -22,6 +26,11 @@ const MessageBubble = ({ message, user }) => {
                 <span className="loading loading-spinner text-error"></span>
               )}
             </span>
+            {!message.tempId && (
+              <button className="btn btn-ghost absolute top-0 right-0" onClick={()=>downloadImage(message.image)}>
+                <IoMdDownload size={20} />
+              </button>
+            )}
           </div>
         </div>
       )}

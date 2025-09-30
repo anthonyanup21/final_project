@@ -3,6 +3,8 @@ import User from "../models/user.model.js"
 import cloudinary from "../cloudinary/cloudinary.js"
 import { getReciverSocketId } from "../server.js"
 import { io } from "../server.js"
+import fs from "fs"
+import path from "path"
 
 export const getUsers = async (req, res) => {
     
@@ -41,13 +43,14 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
 
     try {
-        console.log("hello")
         const senderId = req.userId
         const { id: reciverId } = req.params
-        const { text, image,tempId} = req.body
+        const { text,tempId} = req.body
+        console.log(req.file)
+        const image=req.file
         let imageUrl
         if (image) {
-            const uploadResponse = await cloudinary.uploader.upload(image)
+            const uploadResponse = await cloudinary.uploader.upload(image.path)
             imageUrl = uploadResponse.secure_url
         }
 
@@ -58,17 +61,16 @@ export const sendMessage = async (req, res) => {
             image: imageUrl
         })
         await newMessage.save()
-        console.log(newMessage)
+
 
         //implement socket.io here
         const reciverSocketId=getReciverSocketId(reciverId)
         if (reciverSocketId){
             io.to(reciverSocketId).emit("newMessage",newMessage)//if there is no to() this message would go to everybody
         }
-
-
-        
         res.status(200).json({ success: true, newMessage,tempId })
+        // const filePath = path.join(__dirname, "uploads", req.file.filename);
+        fs.unlinkSync(`./uploads/${req.file.filename}`)
 
 
     } catch (error) {

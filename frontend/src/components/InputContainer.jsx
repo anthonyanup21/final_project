@@ -8,33 +8,30 @@ const InputContainer = () => {
   const { sendMessage, isSendingMessage } = useMessageStore();
   const [preview, setpreview] = useState(null);
   const imageUpload = useRef("");
+  const [image, setimage] = useState(null)
 
   const handleClick = () => {
     imageUpload.current.click();
   };
   const removeImage = () => {
     setpreview(null);
+    setimage(null)
   };
 
   const handleChange = (e) => {
     const file = e.target.files[0];
-    const render = new FileReader();
-    render.readAsDataURL(file);
-    render.onload = async () => {
-      const base64Image = render.result;
-      setpreview(base64Image);
-    };
+    setpreview(URL.createObjectURL(file))
+    setimage(file)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!text.trim().length && !preview) return;
-    if (preview){
-      console.log("message contains image")
-    }
-    sendMessage({text:text.trim(),image:preview});
+    if (!text.trim().length && !image) return;
+
+    sendMessage(text.trim(),image,preview);
     setpreview(null)
     settext("")
+    setimage(null)
   };
   return (
     <form onSubmit={handleSubmit}>

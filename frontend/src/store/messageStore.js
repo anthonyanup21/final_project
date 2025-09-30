@@ -43,17 +43,23 @@ const useMessageStore = create((set, get) => ({
         }
 
     },
-    sendMessage: async (messageData) => {
+    sendMessage: async (text,image,preview) => {
         const { messages, messagesQueue } = get()
 
         // set({ isSendingMessage: true })
         const tempId = "tempid" + Date.now()
-        const { text, image } = messageData
+
+        const formData=new FormData()
+        formData.append("text",text)
+        formData.append("image",image)
+        formData.append("tempId",tempId)
+
         const tempMessage = {
             tempId,
             senderId: useAuthStore.getState().user._id,
             text,
-            image
+            image:preview,
+            formData
 
         }
         //optiemistic rendering
@@ -81,8 +87,9 @@ const useMessageStore = create((set, get) => ({
     processMessageQueue: async () => {
 
         const messageData = get().messagesQueue[0]
-        const res = await axiosInstance.post(`/message/send/${get().selectedUser._id}`, { ...messageData, tempId: messageData.tempId })
-        const { newMessage, tempId: returnedTempId } = res.data
+
+        const res = await axiosInstance.post(`/message/send/${get().selectedUser._id}`, messageData.formData)
+        const { newMessage,tempId:returnedTempId} = res.data
 
 
         set((state) => ({

@@ -100,7 +100,7 @@ const useAuthStore = create((set, get) => ({
         const { user, socket } = get()
 
         if (!user || socket?.connected) return //return if there is no auth user or if the user is alreday connected to socket.io
-        const newSocket = io("http://localhost:3000", {
+        const newSocket = io(import.meta.env.ENV=="development"?"http://localhost:3000":"/", {
             query: {
                 userId: user._id
             }

@@ -98,13 +98,15 @@ const useAuthStore = create((set, get) => ({
     },
     connectSocket: async () => {
         const { user, socket } = get()
+        const url=import.meta.env?.ENV=="development"?"http://localhost:3000":"/"
 
         if (!user || socket?.connected) return //return if there is no auth user or if the user is alreday connected to socket.io
-        const newSocket = io(import.meta.env.ENV=="development"?"http://localhost:3000":"/", {
+        const newSocket = io(url, {
             query: {
                 userId: user._id
             }
         })
+
         newSocket.connect()
         set({ socket: newSocket })
         newSocket.on("getOnlineUsers",(userIds)=>{

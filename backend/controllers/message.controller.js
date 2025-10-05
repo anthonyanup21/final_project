@@ -43,10 +43,11 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
 
     try {
+        console.log(req.file)
         const senderId = req.userId
         const { id: reciverId } = req.params
         const { text,tempId} = req.body
-        console.log(req.file)
+
         const image=req.file
         let imageUrl
         if (image) {
@@ -69,8 +70,8 @@ export const sendMessage = async (req, res) => {
             io.to(reciverSocketId).emit("newMessage",newMessage)//if there is no to() this message would go to everybody
         }
         res.status(200).json({ success: true, newMessage,tempId })
-        // const filePath = path.join(__dirname, "uploads", req.file.filename);
-        fs.unlinkSync(`./uploads/${req.file.filename}`)
+        const filePath = path.join(__dirname, "uploads", req.file.filename);
+        fs.unlinkSync(filePath)
 
 
     } catch (error) {

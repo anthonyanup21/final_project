@@ -41,7 +41,7 @@ io.on("connection",(socket)=>{
     })
 })
 
-if(process.env.ENV!="production"){
+if(process.env.ENV=="development"){
     app.use(cors({origin:"http://localhost:5173",credentials:true}))
 
 
@@ -62,7 +62,7 @@ if(process.env.ENV=="production"){
 app.get(/.*/,(req,res)=>{
     res.sendFile(path.join(__dirname,"../frontend/dist/index.html"))
 })}
-
+console.log(process.env.ENV)
 connectDB().then(() => {
     server.listen(process.env.PORT, () => {
         console.log(`server is running at port ${process.env.PORT||3000}`)

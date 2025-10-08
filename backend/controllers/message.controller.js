@@ -7,7 +7,7 @@ import fs from "fs"
 import path from "path"
 
 export const getUsers = async (req, res) => {
-    
+
     try {
         const id = req.userId
         const allUsers = await User.find({ _id: { $ne: id } }).select("-password")
@@ -43,12 +43,10 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
 
     try {
-        console.log(req.file)
         const senderId = req.userId
         const { id: reciverId } = req.params
-        const { text,tempId} = req.body
-
-        const image=req.file
+        const { text, tempId } = req.body
+        const image = req.file
         let imageUrl
         if (image) {
             const uploadResponse = await cloudinary.uploader.upload(image.path)
@@ -65,14 +63,20 @@ export const sendMessage = async (req, res) => {
 
 
         //implement socket.io here
-        const reciverSocketId=getReciverSocketId(reciverId)
-        if (reciverSocketId){
-            io.to(reciverSocketId).emit("newMessage",newMessage)//if there is no to() this message would go to everybody
+        const reciverSocketId = getReciverSocketId(reciverId)
+        if (reciverSocketId) {
+            io.to(reciverSocketId).emit("newMessage", newMessage)//if there is no to() this message would go to everybody
         }
-        res.status(200).json({ success: true, newMessage,tempId })
-        const filePath = path.join(__dirname, "uploads", req.file.filename);
-        fs.unlinkSync(filePath)
 
+        res.status(200).json({ success: true, newMessage, tempId })
+        if (imageUrl) {
+            const __dirname = path.resolve()
+            const filePath = path.join(__dirname, "uploads", req.file.filename);
+            console.log(filePath)
+            fs.unlinkSync(filePath)
+            imageUrl=undefined
+        }
+  
 
     } catch (error) {
         console.log("error in sendMessage controller", error)

@@ -19,7 +19,7 @@ services:
     environment:
       PORT: 3000
       MONGODB_URL: #your mongo db atlas url (dont forget to mention database name in the url)
-      SECRET:  #your secret key for bcrypt
+      SECRET:  #your secret key for jwt
       ENV: "development"
       CLOUDINARY_CLOUD_NAME:  #your cloudinary name
       CLOUDINARY_API_SECRET:  #your api secret key

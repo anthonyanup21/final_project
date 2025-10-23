@@ -2,6 +2,7 @@ import React from "react";
 import useAuthStore from "../store/authStore";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { SiLetsencrypt } from "react-icons/si";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -34,6 +35,10 @@ const Navbar = () => {
 
       {/* Right side */}
       <div className="flex items-center space-x-3">
+        <button className="btn btn-ghost btn-sm text-base-content hover:bg-primary/10" onClick={()=>navigate("/decode")}>
+          <SiLetsencrypt size={17}/> Decoide
+        </button>
+
         <button
           className="btn btn-ghost btn-sm text-base-content hover:bg-primary/10"
           onClick={() => navigate("/settings")}

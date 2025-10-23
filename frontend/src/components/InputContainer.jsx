@@ -2,36 +2,37 @@ import React, { useRef, useState } from "react";
 import useMessageStore from "../store/messageStore";
 import { FaImage } from "react-icons/fa6";
 import { MdCancel } from "react-icons/md";
+import { RiImageEditFill } from "react-icons/ri";
 
 const InputContainer = () => {
   const [text, settext] = useState("");
   const { sendMessage, isSendingMessage } = useMessageStore();
   const [preview, setpreview] = useState(null);
   const imageUpload = useRef("");
-  const [image, setimage] = useState(null)
+  const [image, setimage] = useState(null);
 
   const handleClick = () => {
     imageUpload.current.click();
   };
   const removeImage = () => {
     setpreview(null);
-    setimage(null)
+    setimage(null);
   };
 
   const handleChange = (e) => {
     const file = e.target.files[0];
-    setpreview(URL.createObjectURL(file))
-    setimage(file)
+    setpreview(URL.createObjectURL(file));
+    setimage(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim().length && !image) return;
 
-    sendMessage(text.trim(),image,preview);
-    setpreview(null)
-    settext("")
-    setimage(null)
+    sendMessage(text.trim(), image, preview);
+    setpreview(null);
+    settext("");
+    setimage(null);
   };
   return (
     <form onSubmit={handleSubmit}>
@@ -74,7 +75,13 @@ const InputContainer = () => {
           <FaImage size={19} />
         </button>
 
-        <button className="btn btn-primary" type="submit" disabled={isSendingMessage || !text.trim()&&!preview}>
+        
+
+        <button
+          className="btn btn-primary"
+          type="submit"
+          disabled={isSendingMessage || (!text.trim() && !preview)}
+        >
           Send
         </button>
       </div>

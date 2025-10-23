@@ -6,6 +6,7 @@ import InputContainer from "../components/InputContainer";
 import useMessageStore from "../store/messageStore";
 import NoChatSelected from "../components/NoChatSelected";
 import SelectedUserContainer from "../components/SelectedUserContainer";
+
 const HomePage = () => {
   const { selectedUser } = useMessageStore();
   return (
@@ -25,6 +26,8 @@ const HomePage = () => {
             <div className="flex-1 overflow-y-auto bg-base-100">
               <MessageContainer />
             </div>
+
+
 
             {/* Input always at bottom */}
             <InputContainer />

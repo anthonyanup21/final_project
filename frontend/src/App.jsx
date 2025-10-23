@@ -5,6 +5,7 @@ import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
 import Settings from "./pages/Settings";
 import useAuthStore from "./store/authStore";
+import StegoDecode from "./pages/StegoDecode";
 
 const App = () => {
   const { user, checkAuth, isCheckingAuth,onlineUsers } = useAuthStore();
@@ -44,6 +45,10 @@ const App = () => {
         <Route
           path="/settings"
           element={user ? <Settings /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/decode"
+          element={<StegoDecode />}
         />
       </Routes>
     </div>

@@ -64,7 +64,7 @@ app.get(/.*/,(req,res)=>{
 })}
 console.log(process.env.ENV)
 connectDB().then(() => {
-    server.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT||3000, () => {
         console.log(`server is running at port ${process.env.PORT||3000}`)
     })
 })

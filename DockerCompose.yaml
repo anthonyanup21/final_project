@@ -1,0 +1,31 @@
+services:
+  frontend:
+    container_name: frontend
+    build: frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - quickchat
+    depends_on:
+      - backend
+  
+  backend:
+    container_name: backend
+    build: backend  
+    ports:
+      - "3000:3000"
+    networks:
+      - quickchat
+    environment:
+      PORT: 3000
+      MONGODB_URL: #your mongo db atlas url (dont forget to mention database name in the url)
+      SECRET:  #your secret key for bcrypt
+      ENV: "development"
+      CLOUDINARY_CLOUD_NAME:  #your cloudinary name
+      CLOUDINARY_API_SECRET:  #your api secret key
+      CLOUDINARY_API_KEY:  #your api key
+  
+networks:
+  quickchat:
+    driver: bridge
+    
